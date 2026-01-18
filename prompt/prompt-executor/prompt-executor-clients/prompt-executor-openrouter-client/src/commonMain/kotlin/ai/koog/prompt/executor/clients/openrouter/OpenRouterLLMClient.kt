@@ -155,10 +155,11 @@ public class OpenRouterLLMClient @JvmOverloads constructor(
     override suspend fun StreamFrameFlowBuilder.processStreamingChunk(chunk: OpenRouterChatCompletionStreamResponse) {
         chunk.choices.firstOrNull()?.let { choice ->
             choice.delta.content?.let { emitAppend(it) }
-            choice.delta.toolCalls?.forEachIndexed { index, openAIToolCall ->
-                val id = openAIToolCall.id
-                val name = openAIToolCall.function.name
-                val arguments = openAIToolCall.function.arguments
+            choice.delta.toolCalls?.forEach { streamToolCall ->
+                val index = streamToolCall.index
+                val id = streamToolCall.id
+                val name = streamToolCall.function?.name
+                val arguments = streamToolCall.function?.arguments
                 upsertToolCall(index, id, name, arguments)
             }
             choice.finishReason?.let { emitEnd(it, createMetaInfo(chunk.usage)) }
