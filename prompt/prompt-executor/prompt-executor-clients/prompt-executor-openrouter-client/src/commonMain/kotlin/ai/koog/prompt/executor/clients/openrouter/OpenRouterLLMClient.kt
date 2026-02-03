@@ -165,10 +165,10 @@ public class OpenRouterLLMClient @JvmOverloads constructor(
             chunk.choices.firstOrNull()?.let { choice ->
                 choice.delta.content?.let { emitAppend(it) }
 
-                choice.delta.toolCalls?.forEachIndexed { index, openAIToolCall ->
-                    val id = openAIToolCall.id
-                    val name = openAIToolCall.function.name
-                    val arguments = openAIToolCall.function.arguments
+                choice.delta.toolCalls?.forEachIndexed { index, streamToolCall ->
+                    val id = streamToolCall.id
+                    val name = streamToolCall.function?.name
+                    val arguments = streamToolCall.function?.arguments
                     upsertToolCall(index, id, name, arguments)
                 }
 
